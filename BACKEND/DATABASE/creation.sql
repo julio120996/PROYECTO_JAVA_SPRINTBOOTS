@@ -1,0 +1,77 @@
+CREATE DATABASE IF NOT EXISTS NekoSound;
+USE NekoSound;
+
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    email VARCHAR(60) UNIQUE NOT NULL ,
+    password VARCHAR(50) NOT NULL,
+    foto_perfil VARCHAR(255),
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tipo_autenticacion VARCHAR(20),
+    id_autenticacion_externa VARCHAR(255)
+);
+
+CREATE TABLE suscripciones (
+    id_suscripcion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    plan boolean NOT NULL,
+    fecha_inicio DATETIME NOT NULL,
+    fecha_fin DATETIME NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+    
+);
+
+
+CREATE TABLE playlists (
+    id_playlist INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+CREATE TABLE artistas (
+    id_artista INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    genero VARCHAR(50),
+    pais VARCHAR(50)
+);
+
+CREATE TABLE albumes (
+    id_album INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(80) NOT NULL,
+    id_artista INT NOT NULL,
+    fecha_lanzamiento DATE,
+    genero VARCHAR(50),
+    FOREIGN KEY (id_artista) REFERENCES artistas(id_artista) ON DELETE CASCADE
+);
+
+CREATE TABLE canciones (
+    id_cancion INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(60) NOT NULL,
+    id_album INT NOT NULL,
+    id_artista INT NOT NULL,
+    audio VARCHAR(255) NOT NULL,
+    pista_subtitulo VARCHAR(255),
+    FOREIGN KEY (id_album) REFERENCES albumes(id_album) ON DELETE CASCADE,
+    FOREIGN KEY (id_artista) REFERENCES artistas(id_artista) ON DELETE CASCADE
+);
+
+CREATE TABLE playlist_canciones (
+    id_playlist_cancion INT AUTO_INCREMENT PRIMARY KEY,
+    id_playlist INT NOT NULL,
+    id_cancion INT NOT NULL,
+    FOREIGN KEY (id_playlist) REFERENCES playlists(id_playlist) ON DELETE CASCADE,
+    FOREIGN KEY (id_cancion) REFERENCES canciones(id_cancion) ON DELETE CASCADE
+);
+
+CREATE TABLE historial (
+    id_historial INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_cancion INT NOT NULL,
+    fecha_reproduccion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_cancion) REFERENCES canciones(id_cancion) ON DELETE CASCADE
+);

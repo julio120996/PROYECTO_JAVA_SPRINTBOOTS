@@ -1,0 +1,23 @@
+/* Elimina márgenes, rellenos y bordes predeterminados del navegador */
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    font-family: 'Poppins', sans-serif;
+    padding-top: 90px; /* Ajusta según la altura de tu barra */
+    background-color: black; /* Fondo oscuro elegante */
+
+    box-sizing: border-box; /* Mejora el manejo de tamaños de elementos */
+   
+}
+
+/* Mantiene el fondo negro y el texto blanco en todas las páginas */
+.global-bg {
+    background-color: black !important;
+    color: white !important;
+    width: 100vw; /* Asegura que ocupe todo el ancho de la pantalla */
+    height: 100vh; /* Ocupa toda la altura de la pantalla */
+    z-index: -200;
+   
+}

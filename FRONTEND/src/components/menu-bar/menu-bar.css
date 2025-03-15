@@ -1,0 +1,122 @@
+/* Fuente más elegante */
+
+
+.menu-bar {
+    background-color: #070707 !important;
+    padding: 15px;
+    border-bottom: 1px solid #ffffff15; 
+    box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.2);
+
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Asegúrate que es mayor que otros elementos */
+    
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Estilos del logo */
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+/* Estilos del menú de navegación */
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-button {
+    font-size: 1rem !important; /* Texto más grande pero razonable */
+    font-weight: 600;
+    text-transform: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-button:hover {
+    color: #ff4081; /* Efecto hover */
+}
+
+/* Estilos de la barra de búsqueda */
+.search-bar {
+    flex-grow: 1;
+    max-width: 700px;
+    
+    margin: 0 20px;
+    background-color: white;
+    border-radius: 30px;
+}
+
+.search-bar .MuiOutlinedInput-root {
+    border-radius: 30px;
+    border: none !important;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.search-bar input {
+    color: black;
+    font-size: 1rem; /* Texto más grande */
+    padding: 12px 18px;
+}
+
+/* Estilos del icono de usuario */l
+.icon-user svg {
+    font-size: 50px !important;
+}
+
+.icon-user {
+    margin-right: 30px !important; /* Ajusta este valor según lo necesites */
+}
+
+.user-panel {
+  background: #2C3E50; /* Fondo más elegante */
+  color: white;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.panel-button {
+  width: 200px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.panel-button .icon {
+  margin-right: 10px;
+}
+
+.panel-button.login {
+  background: #3498DB;
+  color: white;
+}
+
+.panel-button.register {
+  background: #E74C3C;
+  color: white;
+}
+
+.panel-button:hover {
+  filter: brightness(1.2);
+}

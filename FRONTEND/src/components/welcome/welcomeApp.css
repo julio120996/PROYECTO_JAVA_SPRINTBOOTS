@@ -1,0 +1,82 @@
+/* Contenedor de la animación */
+.transition-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: white; /* Fondo BLANCO al inicio */
+    color: black; /* Texto NEGRO */
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow: hidden;
+    transition: background-color 2s ease-in-out;
+}
+
+/* Fondo NEGRO permanente al finalizar la animación */
+.black-bg {
+    background-color: #111 !important; /* Fondo NEGRO */
+    color: white !important; /* Texto BLANCO */
+   z-index: 10;
+    position: relative;
+}
+
+/* Estilos del texto */
+.text {
+    font-size: 4rem; /* Texto grande */
+    font-weight: 800; /* Negrita */
+    text-align: center;
+    font-family: "Schibsted Grotesk", sans-serif;
+    transition: color 2s ease-in-out;
+}
+
+/* Cambio de color del texto */
+.text-black {
+    color: black;
+}
+
+.text-white {
+    color: white;
+}
+
+/* Animación de círculo cerrándose */
+.circle-animation {
+    position: absolute;
+    width: 300vw; /* Tamaño inicial grande */
+    height: 300vw;
+    background-color: black; /* Círculo negro */
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    animation: close-circle 2.5s cubic-bezier(.25, 1, .30, 1) forwards;
+}
+
+/* El círculo se cierra hasta oscurecer completamente la pantalla */
+@keyframes close-circle {
+    from {
+      clip-path: circle(150%);
+    }
+    to {
+      clip-path: circle(0%);
+    }
+}
+
+/* Nueva animación de salida */
+.fade-out {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+/* Oculta la barra de navegación durante la animación */
+.hidden-home #navbar {
+    display: none !important;
+}
+
+/* Oscurecemos la pantalla completamente antes de redirigir */
+.fade-to-black {
+    background-color: black !important;
+    transition: background-color 1s ease-in-out;
+}

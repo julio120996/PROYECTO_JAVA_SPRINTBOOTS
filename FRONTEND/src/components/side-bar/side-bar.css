@@ -1,0 +1,402 @@
+/* Contenedor de la barra lateral */
+.sidebar-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Sidebar */
+.sidebar {
+    margin-top: 150px;
+    position: fixed !important;
+    top: 0; /* Asegura que inicie desde la parte superior */
+    left: 0;
+    height: 100%;
+    width: 220px;
+    background: black;
+    color: white;
+    padding: 0 20px; /* Eliminamos el padding superior */
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    font-family: 'Poppins', sans-serif;
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto; /* Permite hacer scroll en los álbumes */
+}
+
+/* Cuando el sidebar está cerrado */
+.sidebar.closed {
+    transform: translateX(-100%);
+}
+
+/* Fijar el título y botón de agregar álbum */
+.sidebar .fixed-header {
+    position: sticky;
+    top: 0;
+    background: black;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+/* Título del sidebar */
+.sidebar h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin: 10px 0;
+}
+
+/* Botón de agregar álbum */
+.sidebar .add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #d63384, #ff6b9b);
+    color: white;
+    padding: 14px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 15px;
+    width: 100%;
+    position: sticky;
+    top: 60px; /* Debajo del título */
+    z-index: 1000;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    gap: 12px;
+}
+
+/* Efecto hover con un degradado más vibrante */
+.sidebar .add-button:hover {
+    background: linear-gradient(135deg, #c2185b, #ff4081);
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(255, 64, 129, 0.5);
+}
+
+/* Icono dentro del botón */
+.sidebar .add-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Contenedor de álbumes */
+.sidebar nav {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 60px; /* Espacio para evitar que el último álbum se tape */
+}
+
+/* Estilos de los álbumes */
+.sidebar .album {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sidebar .album:hover {
+    background: #222;
+}
+
+/* Icono del menú (fijo en la pantalla) */
+.menu-icon {
+    cursor: pointer;
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background: #222;
+    padding: 12px; /* Reducido para mejor proporción */
+    margin-left: 230px;
+    margin-bottom: 20px;
+    margin-top: 120px;
+    border-radius: 50%; /* Forma perfectamente redonda */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: margin-left 0.5s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 1000; /* Se mantiene visible sobre otros elementos */
+}
+
+/* Mover el icono cuando el sidebar está cerrado */
+.sidebar.closed + .menu-icon {
+    margin-left: 10px;
+    transform: translateX(0);
+}
+
+.menu-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* Contenido principal */
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 280px; /* Espacio cuando el sidebar está abierto */
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* Ajustar contenido cuando el sidebar está cerrado */
+.sidebar.closed ~ .content {
+    margin-left: 40px; /* Se expande cuando el sidebar está oculto */
+}
+
+/* MODAL OVERLAY - Fondo oscuro con efecto blur */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: overlayFade 0.3s ease-in-out;
+}
+
+/* MODAL - Diseño moderno */
+.modal {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    width: 380px;
+    position: relative;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    animation: modalEntrance 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Título con efecto gradiente */
+.modal h3 {
+    margin: 0 0 2rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #ff6b6b, #d63384);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+/* Input moderno */
+.modal input {
+    width: 90%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    background: #2d2d2d;
+    border: 2px solid #404040;
+    border-radius: 8px;
+    color: #fff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal input::placeholder {
+    color: #666;
+}
+
+.modal input:focus {
+    border-color: #d63384;
+    box-shadow: 0 0 0 3px rgba(214, 51, 132, 0.2);
+    background: #333;
+}
+
+/* Botón Confirmar mejorado */
+.confirm-button {
+    background: linear-gradient(135deg, #d63384, #ff6b9b);
+    color: white;
+    padding: 14px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+
+.confirm-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(214, 51, 132, 0.4);
+}
+
+.confirm-button::after {
+    content: "🎵";
+    position: absolute;
+    right: 20px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.confirm-button:hover::after {
+    opacity: 1;
+    right: 15px;
+}
+
+/* Botón de cerrar (X) más estilizado */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #888;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.close-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Animaciones mejoradas */
+@keyframes overlayFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Efecto de neón para el borde */
+.modal::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    background: linear-gradient(45deg, 
+        rgba(214, 51, 132, 0.3),
+        rgba(255, 107, 155, 0.3),
+        transparent 50%);
+    mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Contenedor de autenticación */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Botones de autenticación */
+.auth-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+    border: none;
+}
+
+.auth-button.login {
+    background: #007bff;
+    color: white;
+}
+
+.auth-button.login:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+.auth-button.register {
+    background: #28a745;
+    color: white;
+}
+
+.auth-button.register:hover {
+    background: #1e7e34;
+    transform: scale(1.05);
+}
+
+/* Botón de eliminar */
+.delete-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #ff6b6b;
+    transition: transform 0.2s ease-in-out;
+    margin-left: auto;
+    padding: 5px;
+}
+
+.delete-button:hover {
+    color: #d63384;
+    transform: scale(1.2);
+}
+
+/* Estilos de los álbumes */
+.album {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 15px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 8px;
+    background: #1a1a1a;
+    margin-bottom: 5px;
+    box-shadow: 0 2px 5px rgba(255, 107, 155, 0.2);
+}
+
+.album:hover {
+    background: #222;
+    box-shadow: 0 4px 10px rgba(255, 107, 155, 0.3);
+}
+
