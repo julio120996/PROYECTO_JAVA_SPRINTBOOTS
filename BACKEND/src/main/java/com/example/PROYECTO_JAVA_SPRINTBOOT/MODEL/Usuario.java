@@ -11,7 +11,7 @@ import java.sql.Date;
 @AllArgsConstructor
 public class Usuario {
 
-    private int id;
+    private Long id;
     private String nombre;
     private String apellido;
     private String email;
