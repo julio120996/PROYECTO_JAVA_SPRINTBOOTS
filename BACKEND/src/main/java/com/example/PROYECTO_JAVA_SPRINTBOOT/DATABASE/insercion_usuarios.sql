@@ -14,8 +14,10 @@ VALUES
 INSERT INTO suscripciones (id_usuario, plan, fecha_inicio, fecha_fin)
 VALUES
 (1, TRUE, '2025-03-01 12:00:00', '2025-04-20 12:00:00'),
-(2, FALSE, NULL, NULL),
+(2, FALSE, '2025-01-01 00:00:00', '2025-01-01 00:00:00'),  -- Fecha predeterminada
 (3, TRUE, '2025-02-20 10:00:00', '2025-03-23 10:00:00'),
 (4, TRUE, '2025-03-10 08:00:00', '2025-04-25 08:00:00'),
-(5, FALSE, NULL, NULL);
+(5, FALSE, '2025-01-01 00:00:00', '2025-01-01 00:00:00');  -- Fecha predeterminada
+  -- Valor predeterminado en lugar de NULL
+
 

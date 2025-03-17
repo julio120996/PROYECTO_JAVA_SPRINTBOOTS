@@ -22,6 +22,14 @@ CREATE TABLE suscripciones (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );
 
+ALTER TABLE suscripciones
+MODIFY fecha_fin DATETIME NULL;
+
+
+ALTER TABLE suscripciones
+MODIFY fecha_inicio DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+
 CREATE TABLE playlists (
     id_playlist INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
@@ -43,6 +51,7 @@ CREATE TABLE artistas (
     FOREIGN KEY (id_genero) REFERENCES generos(id_genero) ON DELETE CASCADE
 );
 
+
 CREATE TABLE albumes (
     id_album INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(80) NOT NULL,
@@ -51,6 +60,7 @@ CREATE TABLE albumes (
     imagen VARCHAR(255) NOT NULL, 
     FOREIGN KEY (id_artista) REFERENCES artistas(id_artista) ON DELETE CASCADE
 );
+
 
 CREATE TABLE canciones (
     id_cancion INT AUTO_INCREMENT PRIMARY KEY,
@@ -63,6 +73,9 @@ CREATE TABLE canciones (
     FOREIGN KEY (id_album) REFERENCES albumes(id_album) ON DELETE CASCADE,
     FOREIGN KEY (id_artista) REFERENCES artistas(id_artista) ON DELETE CASCADE
 );
+
+ALTER TABLE canciones
+ADD COLUMN imagen VARCHAR(255);
 
 CREATE TABLE playlist_canciones (
     id_playlist_cancion INT AUTO_INCREMENT PRIMARY KEY,
