@@ -1,9 +1,5 @@
 package com.example.PROYECTO_JAVA_SPRINTBOOT.MODEL;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.sql.Date;
 
 import jakarta.persistence.Column;
@@ -11,18 +7,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "usuarios")
+
+@Getter
+@Setter
+
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id_usuario;
 
-    @Column
-    private Long id;
     @Column
     private String nombre;
     @Column
@@ -35,8 +35,7 @@ public class Usuario {
     private String foto_perfil;
     @Column
     private Date fecha_registro;
-    @Column
-    private String tipo_autenticacion;
+
     @Column
     private String id_autenticacion_externa;
 }

@@ -1,7 +1,6 @@
 package com.example.PROYECTO_JAVA_SPRINTBOOT.SERVICES;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,35 +8,13 @@ import org.springframework.stereotype.Service;
 import com.example.PROYECTO_JAVA_SPRINTBOOT.MODEL.Usuario;
 import com.example.PROYECTO_JAVA_SPRINTBOOT.REPOSITORY.UsuarioRepositoy;
 
-
-
 @Service
 public class UsuarioServices {
 
     @Autowired
-    private UsuarioRepositoy usuarioRepositoy;
+    private UsuarioRepositoy repositoy;
 
-    public List<Usuario> getAllUsuario(){
-        return usuarioRepositoy.findAll();
+    public List<Usuario> getAllUsuarios() {
+        return repositoy.findAll();
     }
-    public Usuario creUsuario(Usuario usuario){
-        return usuarioRepositoy.save(usuario);
-    }
-
-    public Usuario updateUsuario(Usuario usuario){
-        return usuarioRepositoy.save(usuario);
-    }
-
-    public void deleteUsuarioById(Long id){
-        usuarioRepositoy.deleteById(id);
-    }
-
-    @Autowired
-    private UsuarioRepositoy usuarioRepository;
-
-    public Optional<Usuario> findByEmailAndPassword(String email, String password) {
-        return usuarioRepository.findByEmailAndPassword(email, password);
-    }
-    
-
 }
