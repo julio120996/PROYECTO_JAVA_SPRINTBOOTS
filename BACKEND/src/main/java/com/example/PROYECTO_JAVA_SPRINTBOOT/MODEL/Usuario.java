@@ -1,41 +1,37 @@
 package com.example.PROYECTO_JAVA_SPRINTBOOT.MODEL;
 
-import java.sql.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "usuarios")
-
-@Getter
-@Setter
-
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_usuario;
+    @Column(name = "id_usuario")
+    private Long id;
 
-    @Column
+    @Column(name = "nombre", nullable = false)
     private String nombre;
-    @Column
-    private String apellido;
-    @Column
-    private String email;
-    @Column
-    private String password;
-    @Column
-    private String foto_perfil;
-    @Column
-    private Date fecha_registro;
 
-    @Column
-    private String id_autenticacion_externa;
+    @Column(name = "apellido", nullable = false)
+    private String apellido;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password")  // Permitir nulo
+    private String password;
+
+    @Column(name = "foto_perfil")
+    @JsonProperty("foto_perfil") // Permite que JSON use "foto_perfil" en vez de "fotoPerfil"
+    private String fotoPerfil;
+    @Column(name = "id_autenticacion_externa")
+    private String idAutenticacionExterna;
 }
