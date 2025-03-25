@@ -1,5 +1,4 @@
--- Active: 1741665160981@@127.0.0.1@3306@nekosound
--- Active: 1741665160981@@127.0.0.1@3306
+-- Active: 1726896132061@@127.0.0.1@3306@nekosound
 DROP DATABASE IF EXISTS NekoSound;
 CREATE DATABASE IF NOT EXISTS NekoSound;
 USE NekoSound;
@@ -11,7 +10,7 @@ CREATE TABLE usuarios (
     email VARCHAR(250) UNIQUE NOT NULL,
     password VARCHAR(255),
     foto_perfil VARCHAR(255),
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_autenticacion_externa VARCHAR(255)
 );
 

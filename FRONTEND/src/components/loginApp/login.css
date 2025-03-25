@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Rock+Salt&display=swap');
+
+/* Solo aplica padding-top: 0px si body tiene la clase 'no-padding-top' */
+body.no-padding-top {
+    padding-top: 0px !important;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    padding: 0 5%; /* Espacio a los lados */
+    overflow: hidden; /* Oculta el scroll */
+    padding-top: 0 !important; /* Asegura que el padding-top sea 0 */
+    
+}
+/* Contenedor del logo y título */
+.header {
+    text-align: left;
+    margin-right: 12rem; /* Espacio entre el logo/título y el cuadro de login */
+}
+
+/* Logo más grande (imagen larga de Miku) */
+.logo-miku {
+    width: 250px; /* Ajusta el ancho según la proporción de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+    margin-bottom: 1rem; /* Espacio entre el logo y el título */
+    animation: float 3s ease-in-out infinite; /* Animación flotante */
+}
+
+/* Nombre "Meow" con estilo elegante */
+.meow-title {
+    font-family: "Rock Salt", cursive !important;
+    font-size: 4.9rem !important; /* Más grande */
+    color: #ff6b6b; /* Color principal */
+    margin: 0; /* Sin margen */
+    line-height: 1.2; /* Espaciado entre líneas */
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5); /* Sutil sombra */
+    animation: glow 2s infinite alternate; /* Efecto de brillo */
+}
+
+/* Animación flotante para el logo */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Efecto de brillo para el título */
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px #ff6b6b, 0 0 10px #ff6b6b, 0 0 20px #ff6b6b;
+    }
+    100% {
+        text-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 30px #ff6b6b;
+    }
+}
+
+/* Caja de login */
+.login-box {
+    background: rgba(47, 47, 47, 0.9);
+    padding: 3rem !important;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 320px; /* Ancho fijo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideIn 1s ease-out; /* Animación de entrada */
+}
+
+/* Animación de entrada para el cuadro de login */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Título del login */
+.title {
+    font-family: 'Poppins', sans-serif !important;
+    color: #fffcfc;
+    font-size: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+/* Botón de Google */
+.google-login {
+    background: #ff6b6b !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 12px !important;
+    width: 100%;
+    border-radius: 5px !important;
+    margin-bottom: 1.5rem !important;
+    transition: background 0.3s ease; /* Transición suave */
+}
+
+.google-login:hover {
+    background: #ff4f4f !important;
+}
+
+/* Separador */
+.divider {
+    color: #bbb !important;
+    margin: 15px 0 !important;
+    font-size: 0.9rem !important;
+}
+
+
+
+/* Inputs */
+.input-field {
+    margin: 10px 0 !important; /* Más espacio entre inputs */
+    width: 100%;
+}
+
+.input-text {
+    color: #fffcfc !important; /* Color de texto más claro */
+    border-color: #555 !important;
+}
+
+.input-text fieldset {
+    border-color: #555 !important;
+}
+
+.input-text:hover fieldset {
+    border-color: #ff6b6b !important;
+}
+
+.input-text:focus fieldset {
+    border-color: #ff6b6b !important; /* Cambia este color al que prefieras */
+}
+
+
+/* Botón de inicio de sesión */
+.login-btn {
+    background: #ff6b6b !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 12px !important;
+    width: 100%;
+    border-radius: 5px !important;
+    margin-top: 1rem !important;
+    transition: background 0.3s ease; /* Transición suave */
+}
+
+.login-btn:hover {
+    background: #ff4f4f !important;
+}
+
+
+/* Enlace de contraseña olvidada */
+.forgot-password {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #ff6b6b;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: color 0.3s ease; /* Transición suave */
+}
+
+.forgot-password:hover {
+    color: #ff4f4f;
+    text-decoration: underline;
+}
+
+a {
+    text-decoration: none !important; /* Elimina la línea debajo del enlace */
+}

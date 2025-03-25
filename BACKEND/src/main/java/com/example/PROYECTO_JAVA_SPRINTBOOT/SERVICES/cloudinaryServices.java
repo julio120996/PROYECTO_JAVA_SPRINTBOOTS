@@ -1,4 +1,5 @@
 package com.example.PROYECTO_JAVA_SPRINTBOOT.SERVICES;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,30 +18,26 @@ public class cloudinaryServices {
     private Cloudinary cloudinary;
 
     @SuppressWarnings("unchecked")
-public Map<String, Object> subirImagen(MultipartFile archivo) {
-    Map<String, Object> respuesta = new HashMap<>();
-    try {
-        System.out.println("Iniciando subida a Cloudinary...");
-        Map<String, Object> uploadResult = cloudinary.uploader().upload(
-                archivo.getBytes(),
-                ObjectUtils.asMap("folder", "perfiles")
-        );
+    public Map<String, Object> subirImagen(MultipartFile archivo) {
+        Map<String, Object> respuesta = new HashMap<>();
+        try {
+            System.out.println("Iniciando subida a Cloudinary...");
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                    archivo.getBytes(),
+                    ObjectUtils.asMap("folder", "perfiles"));
 
-        String url = (String) uploadResult.get("secure_url");
-        System.out.println("URL generada por Cloudinary: " + url);
+            String url = (String) uploadResult.get("secure_url");
+            System.out.println("URL generada por Cloudinary: " + url);
 
-        respuesta.put("success", true);
-        respuesta.put("url", url);
-    } catch (IOException e) {
-        e.printStackTrace();
-        respuesta.put("success", false);
-        respuesta.put("message", "Error al subir la imagen: " + e.getMessage());
+            respuesta.put("success", true);
+            respuesta.put("url", url);
+        } catch (IOException e) {
+            e.printStackTrace();
+            respuesta.put("success", false);
+            respuesta.put("message", "Error al subir la imagen: " + e.getMessage());
+        }
+        return respuesta;
     }
-    return respuesta;
-}
-
-
-    
 
     public Map<String, Object> eliminarImagen(String url) {
         Map<String, Object> respuesta = new HashMap<>();
@@ -70,5 +67,5 @@ public Map<String, Object> subirImagen(MultipartFile archivo) {
         }
         return respuesta;
     }
-    
+
 }

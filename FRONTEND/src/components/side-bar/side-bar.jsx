@@ -1,5 +1,5 @@
 import { Album, LogIn, Plus, Trash2, UserPlus, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Content from "../content/content";
 import "./side-bar.css";
 
@@ -10,7 +10,14 @@ const Sidebar = () => {
   const [albums, setAlbums] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState("");
-  const [isEnabled, setIsEnabled] = useState(true);
+
+  const [isEnabled, setIsEnabled] = useState(false); // Estado de habilitación
+
+  // Recuperar el estado de autenticación desde localStorage
+  useEffect(() => {
+    const authState = localStorage.getItem("isAuthenticated") === "true";
+    setIsEnabled(authState);
+  }, []);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleModal = () => isEnabled && setIsModalOpen(!isModalOpen);
@@ -53,12 +60,17 @@ const Sidebar = () => {
           </>
         ) : (
           <div className="auth-container">
+            <a href="login">
             <button className="auth-button login">
               <LogIn size={20} /> Iniciar Sesión
             </button>
+            </a>
+
+            <a href="/login/registro">
             <button className="auth-button register">
               <UserPlus size={20} /> Registrarse
             </button>
+            </a>
           </div>
         )}
       </div>

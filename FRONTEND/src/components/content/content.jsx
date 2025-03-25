@@ -1,5 +1,5 @@
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -34,7 +34,14 @@ const Content = () => {
   const { sliderSettingsAuto, sliderSettingsManual } = useSliderSettings();
 
   const [currentSong, setCurrentSong] = useState(null);
-  const [isPlayable, setIsPlayable] = useState(true); // Cambia a false si solo quieres visualizar
+ 
+  const [isPlayable, setIsPlayable] = useState(false);
+
+  // Sincronizar estado de reproducción con autenticación
+  useEffect(() => {
+    const authState = localStorage.getItem("isAuthenticated") === "true";
+    setIsPlayable(authState);
+  }, []);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

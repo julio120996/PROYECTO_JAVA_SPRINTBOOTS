@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ProyectoJavaSprintbootApplication<PROYECTO_JAVA_SPRINTBOOT>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.PROYECTO_JAVA_SPRINTBOOT.ProyectoJavaSprintbootApplication",
+            "projectName": "PROYECTO_JAVA_SPRINTBOOT",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
