@@ -1,4 +1,3 @@
--- Active: 1726896132061@@127.0.0.1@3306@nekosound
 DROP DATABASE IF EXISTS NekoSound;
 CREATE DATABASE IF NOT EXISTS NekoSound;
 USE NekoSound;
@@ -8,20 +7,12 @@ CREATE TABLE usuarios (
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     email VARCHAR(250) UNIQUE NOT NULL,
-    password VARCHAR(255),
+    password VARCHAR(255) ,
     foto_perfil VARCHAR(255),
-    fecha_registro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
     id_autenticacion_externa VARCHAR(255)
 );
 
-CREATE TABLE suscripciones (
-    id_suscripcion INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    plan BOOLEAN NOT NULL,
-    fecha_inicio DATETIME ,
-    fecha_fin DATETIME ,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
-);
 
 CREATE TABLE playlists (
     id_playlist INT AUTO_INCREMENT PRIMARY KEY,

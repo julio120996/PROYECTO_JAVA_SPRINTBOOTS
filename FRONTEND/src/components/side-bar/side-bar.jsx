@@ -1,5 +1,8 @@
 import { Album, LogIn, Plus, Trash2, UserPlus, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import AlbumPlaylist from "../album/album";
+import PlayList from "../album/PlayList-App/PlayList-App";
 import Content from "../content/content";
 import "./side-bar.css";
 
@@ -10,10 +13,22 @@ const Sidebar = () => {
   const [albums, setAlbums] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAlbumName, setNewAlbumName] = useState("");
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [currentAlbumId, setCurrentAlbumId] = useState(null);
+  const [showPlayList, setShowPlayList] = useState(false);
 
-  const [isEnabled, setIsEnabled] = useState(false); // Estado de habilitación
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Recuperar el estado de autenticación desde localStorage
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const albumId = searchParams.get("albumId");
+    setCurrentAlbumId(albumId);
+
+    // Si la URL tiene "playList", mostrar PlayList
+    setShowPlayList(searchParams.has("playList"));
+  }, [location.search]);
+
   useEffect(() => {
     const authState = localStorage.getItem("isAuthenticated") === "true";
     setIsEnabled(authState);
@@ -34,7 +49,13 @@ const Sidebar = () => {
   };
 
   const handleDeleteAlbum = (id) => {
-    setAlbums(albums.filter(album => album.id !== id));
+    setAlbums(albums.filter((album) => album.id !== id));
+  };
+
+  const handleDoubleClick = (albumName) => {
+    // Cambia albumName por playlistName para ser consistente
+    navigate(`/home?playList=true&playlistName=${encodeURIComponent(albumName)}`);
+    setShowPlayList(true);
   };
 
   return (
@@ -48,7 +69,11 @@ const Sidebar = () => {
             </button>
             <nav>
               {albums.map((album) => (
-                <div key={album.id} className="album">
+                <div
+                  key={album.id}
+                  className="album"
+                  onDoubleClick={() => handleDoubleClick(album.name)}
+                >
                   <span className="icon">{album.icon}</span>
                   <span className="album-name">{album.name}</span>
                   <button className="delete-button" onClick={() => handleDeleteAlbum(album.id)}>
@@ -61,15 +86,14 @@ const Sidebar = () => {
         ) : (
           <div className="auth-container">
             <a href="login">
-            <button className="auth-button login">
-              <LogIn size={20} /> Iniciar Sesión
-            </button>
+              <button className="auth-button login">
+                <LogIn size={20} /> Iniciar Sesión
+              </button>
             </a>
-
             <a href="/login/registro">
-            <button className="auth-button register">
-              <UserPlus size={20} /> Registrarse
-            </button>
+              <button className="auth-button register">
+                <UserPlus size={20} /> Registrarse
+              </button>
             </a>
           </div>
         )}
@@ -78,9 +102,14 @@ const Sidebar = () => {
       <div className="menu-icon" onClick={toggleSidebar}>
         <Album size={48} />
       </div>
-
       <div className={`content ${isOpen ? "shifted" : ""}`}>
-        <Content/>
+        {showPlayList ? (
+          <PlayList />
+        ) : currentAlbumId ? (
+          <AlbumPlaylist albumId={currentAlbumId} />
+        ) : (
+          <Content />
+        )}
       </div>
 
       {isModalOpen && (

@@ -13,10 +13,12 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .cors(cors -> cors.disable()) // Asegura que CORS se gestione externamente
-                                .csrf(csrf -> csrf.disable())
+                                .cors(cors -> cors.disable()) // Desactivar CORS si no es necesario
+                                .csrf(csrf -> csrf.disable()) // Desactivar CSRF
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
+                                                                "/album/**", // 🔥 Permitir todas las rutas dentro de
+                                                                             // /album/
                                                                 "/usuario/agregar",
                                                                 "/usuario/google",
                                                                 "/usuario/actualizar",
@@ -25,11 +27,13 @@ public class SecurityConfig {
                                                                 "/usuario/login",
                                                                 "/correo/enviar-codigo")
                                                 .permitAll()
-                                                .anyRequest().authenticated())
+                                                .anyRequest().authenticated()) // Requiere autenticación para otras
+                                                                               // rutas
                                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                                 .formLogin(form -> form.disable())
                                 .httpBasic(basic -> basic.disable());
 
                 return http.build();
         }
+
 }

@@ -5,25 +5,30 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Table(name = "artistas")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Artistas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column
+    @Column(name = "id_artista")
+    private Integer id;
+
+    @Column(name = "nombre", nullable = false, length = 50)
     private String nombre;
-    @Column
-    private String genero;
-    @Column
+
+    @Column(name = "id_genero", nullable = false)
+    private Integer idGenero;
+
+    @Column(name = "pais", length = 50)
     private String pais;
-    @Column
-    private int id_genero;
-    
 }

@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
-import { AuthContext } from "../user/AuthContext"; // Asegúrate de que la ruta es correcta
-
 import { useApiBaseUrl } from "../urlAPI/useApiBaseUrl";
+import { AuthContext } from "../user/AuthContext"; // Asegúrate de que la ruta es correcta
 
 export function useActualizarUsuario() {
     const API_BASE_URL = useApiBaseUrl();

@@ -1,5 +1,6 @@
 const useSliderSettings = () => {
     const settings = {
+      
       dots: false,
       infinite: true,
       speed: 500,

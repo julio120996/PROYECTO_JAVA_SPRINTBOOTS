@@ -1,0 +1,96 @@
+.music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #121212;
+    color: white;
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
+    height: 80px;
+    z-index: 9999;
+  }
+  
+  .player-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .player-info img {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    margin-right: 15px;
+  }
+  
+  .player-controls {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .controls-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .progress-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 8px;
+    overflow: visible !important; /* Evita que los números sean recortados */
+}
+
+  
+  .progress-bar {
+    flex-grow: 1;
+    height: 4px;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    background: #1db954;
+    border-radius: 50%;
+  }
+  
+  .time {
+    font-size: 14px; /* Asegura buena visibilidad */
+    color: #ffffff;
+    font-weight: bold;
+    min-width: 45px; /* Asegura espacio suficiente para los números */
+    text-align: center;
+    white-space: nowrap; /* Evita que los números se compriman */
+}
+  
+  .navigation-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .play-button, .control-button {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .play-button svg, .control-button svg {
+    width: 20px !important;
+    height: 20px !important;
+  }

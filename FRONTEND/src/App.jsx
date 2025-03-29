@@ -3,6 +3,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 // Componentes
 import Albuns from "./components/album/album.jsx";
+import PlayList from "./components/album/PlayList-App/PlayList-App.jsx";
 import Home from "./components/home/home.jsx";
 import Login from "./components/loginApp/login/login.jsx";
 import Recuperar from "./components/loginApp/recuperar/recuperar.jsx";
@@ -23,6 +24,7 @@ function App() {
 
           <Route path="/home/user" element={<User/>} />
           <Route path="/home/albuns" element={<Albuns />} />
+          <Route path="/home/playList" element={<PlayList />} />
         </Routes>
       </Router>
     </div>
