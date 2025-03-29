@@ -7,6 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+
+/*ESTA CLASE SOLAMENTE ES PARA OBTENER DATOS DE LA CLASE CANCION UTLIZANDO CON NOMBRES ESPECIFICOS EN ALGUNAS CONSULTAS*/
 public class CancionDTO {
     private Long id;
     private String titulo;

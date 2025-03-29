@@ -12,7 +12,7 @@ public interface CancionRepository extends JpaRepository<Canciones, Long> {
 
     @Query("SELECT COUNT(c) FROM Canciones c WHERE c.album.id = :idAlbum")
     int countByAlbumId(@Param("idAlbum") Long idAlbum);
-
+/*devuelve una lista de canciones seleccionadas aleatoriamente junto con la imagen del álbum al que pertenecen */
     @Query(value = """
                 SELECT c.id_cancion AS id, c.titulo, c.audio,
                        COALESCE(NULLIF(c.imagen, ''), a.imagen) AS imagen
@@ -22,7 +22,8 @@ public interface CancionRepository extends JpaRepository<Canciones, Long> {
                 LIMIT 10
             """, nativeQuery = true)
     List<Object[]> findRandomSongsWithAlbumImage();
-
+    
+/*Recupera una lista de canciones de un álbum específico, junto con detalles del álbum y del artista */
     @Query(value = """
                 SELECT al.id_album, al.titulo AS album_titulo, al.fecha_lanzamiento, al.imagen AS album_imagen,
                        a.id_artista, a.nombre AS artista_nombre, a.pais AS artista_pais,

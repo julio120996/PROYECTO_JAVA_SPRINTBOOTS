@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/* */
 public class ResponseHelper {
     public static Map<String, Object> enviarRespuesta(boolean exito, String mensaje) {
         Map<String, Object> respuesta = new HashMap<>();
