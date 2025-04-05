@@ -42,8 +42,10 @@ public class UsuarioController {
                 .idAutenticacionExterna(idAutenticacionExterna)
                 .build();
 
+                                                                        /*SE SUBE PRIMERO A LA NUBE */
         return ResponseEntity.ok(usuarioService.agregarUsuario(usuario, foto_perfil));
     }
+    
 
     @PostMapping("/actualizar") // En vez de @PutMapping
     public ResponseEntity<Map<String, Object>> actualizarUsuario(

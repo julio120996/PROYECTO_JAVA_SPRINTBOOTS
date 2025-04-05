@@ -18,12 +18,14 @@ public class cloudinaryController {
     @Autowired
     private cloudinaryServices cloudinaryService;
 
+    /*SUBIR IMAGENES SOLAMENTE PARA USUARIOS PERFILES*/
     @PostMapping("/subir")
     public ResponseEntity<Map<String, Object>> subirImagen(@RequestParam("archivo") MultipartFile archivo) {
         Map<String, Object> respuesta = cloudinaryService.subirImagen(archivo);
         return ResponseEntity.ok(respuesta);
     }
 
+    /*ELIMINAR IMAGENES SOLAMENTE PARA USUARIOS PERFILES*/
     @DeleteMapping("/eliminar")
     public ResponseEntity<Map<String, Object>> eliminarImagen(@RequestParam("url") String url) {
         Map<String, Object> respuesta = cloudinaryService.eliminarImagen(url);

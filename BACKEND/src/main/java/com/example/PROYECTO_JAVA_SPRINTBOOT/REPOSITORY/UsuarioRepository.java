@@ -9,8 +9,9 @@ import com.example.PROYECTO_JAVA_SPRINTBOOT.MODEL.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    /*Busca un usuario por su correo electrónico. */
     Optional<Usuario> findByEmail(String email);
-
+    /*Busca un usuario por su identificador de autenticación externa */
     Optional<Usuario> findByIdAutenticacionExterna(String idAutenticacionExterna);
 
 }

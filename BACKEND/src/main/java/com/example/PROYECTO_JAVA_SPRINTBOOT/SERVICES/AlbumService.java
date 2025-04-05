@@ -12,7 +12,7 @@ import com.example.PROYECTO_JAVA_SPRINTBOOT.REPOSITORY.AlbumRepository;
 public class AlbumService {
     @Autowired
     private AlbumRepository albumRepository;
-
+    
     public List<AlbumProjection> obtenerAlbumes() {
         return albumRepository.findAllAlbums();
     }

@@ -17,6 +17,7 @@ public class emailController {
     @Autowired
     private emailServices emailService;
 
+    /*ENVIA CODIGO A TRAVES DE GOOGLE*/
     @PostMapping("/enviar-codigo")
     public ResponseEntity<Map<String, Object>> enviarCodigo(@RequestBody Map<String, String> request) {
         String email = request.get("email");

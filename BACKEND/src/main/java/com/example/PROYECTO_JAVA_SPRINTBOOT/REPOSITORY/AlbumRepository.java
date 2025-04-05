@@ -10,12 +10,13 @@ import com.example.PROYECTO_JAVA_SPRINTBOOT.MODEL.Album;
 
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, Integer> {
+   
        @Query("""
                          SELECT a.id AS idAlbum, a.titulo AS titulo, a.idArtista AS idArtista, ar.nombre AS nombreArtista, a.imagen AS imagen
                          FROM Album a INNER JOIN Artistas ar ON a.idArtista = ar.id
                      """)
        List<AlbumProjection> findAllAlbums();
-
+    
        @Query("""
                          SELECT a.id AS idAlbum, a.titulo AS titulo, a.idArtista AS idArtista, ar.nombre AS nombreArtista, a.imagen AS imagen
                          FROM Album a INNER JOIN Artistas ar ON a.idArtista = ar.id ORDER BY FUNCTION('RAND') LIMIT 10
