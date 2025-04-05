@@ -1,54 +1,31 @@
 import { Delete, Favorite, MoreHoriz, Pause, PlayArrow } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useEliminarCancionPlaylist } from "../../../hooks/playList/useEliminarCancionPlaylist.js";
+import { usePlaylistDetalles } from "../../../hooks/playList/usePlaylistDetalles.js";
+import { AuthContext } from "../../../hooks/user/AuthContext";
 import MusicPlayer from "../../MusicPlayer/MusicPlayer";
 import SongDetailView from "../../SongDetails/SongDetailView";
 import "./../album.css";
 
 const PlayList = () => {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const playlistName = searchParams.get('playlistName') || 'Mi Playlist';
-  const [creationDate] = useState(new Date().toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }));
+  const [searchParams] = useSearchParams();
+  const playlistId = searchParams.get('playlistId');
+  const { usuario } = useContext(AuthContext);
+  
+  const { 
+    playlistDetalles, 
+    loading, 
+    error,
+    obtenerPlaylistDetalles 
+  } = usePlaylistDetalles();
 
-  // Datos de ejemplo para la playlist
-  const [songs, setSongs] = useState([
-    {
-      id: 1,
-      title: "Bohemian Rhapsody",
-      artist: "Queen",
-      album: "A Night at the Opera",
-      duration: "5:55",
-      plays: "1,234,567,890",
-      image: "https://i.scdn.co/image/ab67616d00001e02b10f306798f7b8da6c7f9e6d",
-      sound: "sound1.mp3"
-    },
-    {
-      id: 2,
-      title: "Imagine",
-      artist: "John Lennon",
-      album: "Imagine",
-      duration: "3:04",
-      plays: "987,654,321",
-      image: "https://i.scdn.co/image/ab67616d00001e02c08d5fa5c0f1a834acef5100",
-      sound: "sound2.mp3"
-    },
-    {
-      id: 3,
-      title: "Billie Jean",
-      artist: "Michael Jackson",
-      album: "Thriller",
-      duration: "4:54",
-      plays: "876,543,210",
-      image: "https://i.scdn.co/image/ab67616d00001e02e220f8cdd1c15f1f3b3f3b5a",
-      sound: "sound3.mp3"
-    }
-  ]);
+  const { 
+    eliminarCancionPlaylist, 
+    loading: loadingEliminar, 
+    error: errorEliminar 
+  } = useEliminarCancionPlaylist();
 
   const [dominantColor, setDominantColor] = useState("#535353");
   const [currentSong, setCurrentSong] = useState(null);
@@ -58,7 +35,20 @@ const PlayList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedSong, setSelectedSong] = useState(null);
 
-  // Menú de opciones
+  useEffect(() => {
+    if (playlistId && usuario?.id_usuario) {
+      obtenerPlaylistDetalles(usuario.id_usuario, playlistId);
+    }
+  }, [playlistId, usuario?.id_usuario]);
+
+  useEffect(() => {
+    if (playlistDetalles?.nombre) {
+      const colors = ["#1E3264", "#8D67AB", "#E8115B", "#148A08", "#F037A5"];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      setDominantColor(randomColor);
+    }
+  }, [playlistDetalles?.nombre]);
+
   const handleMenuOpen = (event, song) => {
     setAnchorEl(event.currentTarget);
     setSelectedSong(song);
@@ -68,23 +58,56 @@ const PlayList = () => {
     setAnchorEl(null);
   };
 
-  const handleDeleteSong = () => {
-    if (selectedSong) {
-      setSongs(songs.filter(song => song.id !== selectedSong.id));
-      handleMenuClose();
+  const handleDeleteSong = async () => {
+  if (!selectedSong || !playlistId || !usuario?.id_usuario) {
+    handleMenuClose();
+    return;
+  }
+
+  try {
+    const success = await eliminarCancionPlaylist(playlistId, selectedSong.id_cancion);
+    
+    if (success) {
+      // 1. Actualización optimista inmediata
+      const nuevasCanciones = playlistDetalles.canciones.filter(
+        c => c.id_cancion !== selectedSong.id_cancion
+      );
+      
+      // 2. Actualizar el estado local primero
+      setPlaylistDetalles(prev => ({
+        ...prev,
+        canciones: nuevasCanciones
+      }));
+
+      // 3. Forzar actualización del contador de canciones
+      setPlaylistDetalles(prev => ({
+        ...prev,
+        canciones: [...nuevasCanciones] // Crear nueva referencia
+      }));
+
+      // 4. Si la canción eliminada era la actual
+      if (currentSong?.id_cancion === selectedSong.id_cancion) {
+        setIsPlaying(false);
+        setCurrentSong(null);
+        setCurrentSongIndex(0);
+      }
+
+      // 5. Recargar datos del servidor para asegurar consistencia
+      setTimeout(async () => {
+        await obtenerPlaylistDetalles(usuario.id_usuario, playlistId);
+      }, 300);
     }
-  };
+  } catch (error) {
+    console.error("Error al eliminar canción:", error);
+    // Mostrar notificación de error al usuario si es necesario
+  } finally {
+    handleMenuClose();
+  }
+};
 
-  useEffect(() => {
-    const colors = ["#1E3264", "#8D67AB", "#E8115B", "#148A08", "#F037A5"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    setDominantColor(randomColor);
-  }, [playlistName]);
-
-  // Funciones de reproducción (se mantienen igual)
   const playSong = (song, index) => {
     setCurrentSongIndex(index);
-    if (currentSong?.sound === song.sound) {
+    if (currentSong?.id_cancion === song.id_cancion) {
       setIsPlaying(!isPlaying);
     } else {
       setCurrentSong(song);
@@ -93,22 +116,22 @@ const PlayList = () => {
   };
 
   const playAllSongs = () => {
-    if (songs.length > 0) {
+    if (playlistDetalles?.canciones?.length > 0) {
       if (currentSong && isPlaying) {
         setIsPlaying(false);
       } else {
         setCurrentSongIndex(0);
-        setCurrentSong(songs[0]);
+        setCurrentSong(playlistDetalles.canciones[0]);
         setIsPlaying(true);
       }
     }
   };
 
   const handleNext = () => {
-    if (currentSongIndex < songs.length - 1) {
+    if (currentSongIndex < playlistDetalles?.canciones?.length - 1) {
       const nextIndex = currentSongIndex + 1;
       setCurrentSongIndex(nextIndex);
-      setCurrentSong(songs[nextIndex]);
+      setCurrentSong(playlistDetalles.canciones[nextIndex]);
       setIsPlaying(true);
     }
   };
@@ -117,7 +140,7 @@ const PlayList = () => {
     if (currentSongIndex > 0) {
       const prevIndex = currentSongIndex - 1;
       setCurrentSongIndex(prevIndex);
-      setCurrentSong(songs[prevIndex]);
+      setCurrentSong(playlistDetalles.canciones[prevIndex]);
       setIsPlaying(true);
     }
   };
@@ -131,6 +154,10 @@ const PlayList = () => {
     setShowDetailView(false);
   };
 
+  if (loading) return <div className="loading">Cargando playlist...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+  if (!playlistDetalles) return <div className="error">No se encontró la playlist</div>;
+
   return (
     <div className="album-container" style={{ "--album-color": dominantColor }}>
       <div className="album-header">
@@ -141,13 +168,17 @@ const PlayList = () => {
           justifyContent: 'center',
           fontSize: '80px'
         }}>
-          {playlistName.split(' ').map(word => word[0]).join('').toUpperCase()}
+          {playlistDetalles.nombre.split(' ').map(word => word[0]).join('').toUpperCase()}
         </div>
         <div className="album-info">
           <Typography variant="caption">PLAYLIST</Typography>
-          <Typography variant="h1" className="album-title">{playlistName}</Typography>
+          <Typography variant="h1" className="album-title">{playlistDetalles.nombre}</Typography>
           <Typography className="album-meta">
-            Creada el {creationDate} • {songs.length} canciones
+            Creada el {new Date(playlistDetalles.fecha_creacion).toLocaleDateString('es-ES', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })} • {playlistDetalles.canciones.length} canciones • Creada por {playlistDetalles.usuario.nombre}
           </Typography>
         </div>
       </div>
@@ -169,32 +200,34 @@ const PlayList = () => {
         <div>TÍTULO</div>
         <div>ÁLBUM</div>
         <div className="song-duration">DURACIÓN</div>
-        <div></div> {/* Espacio para el botón de eliminar */}
+        <div></div>
       </div>
 
       <div className="songs-list">
-        {songs.map((song, index) => (
+        {playlistDetalles.canciones.map((song, index) => (
           <div
-            key={song.id}
-            className={`song-row ${currentSong?.sound === song.sound ? 'active' : ''}`}
+            key={song.id_cancion}
+            className={`song-row ${currentSong?.id_cancion === song.id_cancion ? 'active' : ''}`}
             onClick={() => playSong(song, index)}
             onDoubleClick={() => handleSongDoubleClick(song, index)}
           >
             <div className="song-index">
               <span className="song-index-number">{index + 1}</span>
               <IconButton className="song-play-button" size="small">
-                {currentSong?.sound === song.sound && isPlaying ? <Pause fontSize="small" /> : <PlayArrow fontSize="small" />}
+                {currentSong?.id_cancion === song.id_cancion && isPlaying ? <Pause fontSize="small" /> : <PlayArrow fontSize="small" />}
               </IconButton>
             </div>
             <div className="song-info">
-              <img src={song.image} alt={song.title} className="song-cover" />
+              <img src={song.album.imagen || 'https://via.placeholder.com/50'} alt={song.titulo} className="song-cover" />
               <div>
-                <Typography className="song-title">{song.title}</Typography>
-                <Typography className="song-artist">{song.artist}</Typography>
+                <Typography className="song-title">{song.titulo}</Typography>
+                <Typography className="song-artist">{song.artista.nombre}</Typography>
               </div>
             </div>
-            <div className="song-album">{song.album}</div>
-            <div className="song-duration">{song.duration}</div>
+            <div className="song-album">{song.album.titulo}</div>
+            <div className="song-duration">
+              {song.duration || '3:45'}
+            </div>
             <IconButton 
               className="delete-button"
               onClick={(e) => {
@@ -208,21 +241,35 @@ const PlayList = () => {
         ))}
       </div>
 
-      {/* Menú de opciones */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleDeleteSong}>
-          <Delete fontSize="small" style={{ marginRight: 8 }} />
-          Eliminar de la playlist
+        <MenuItem 
+          onClick={handleDeleteSong}
+          disabled={loadingEliminar}
+        >
+          {loadingEliminar ? (
+            "Eliminando..."
+          ) : (
+            <>
+              <Delete fontSize="small" style={{ marginRight: 8 }} />
+              Eliminar de la playlist
+            </>
+          )}
         </MenuItem>
       </Menu>
 
-      {showDetailView && (
+      {showDetailView && currentSong && (
         <SongDetailView
-          song={currentSong}
+          song={{
+            ...currentSong,
+            title: currentSong.titulo,
+            artist: currentSong.artista.nombre,
+            album: currentSong.album.titulo,
+            image: currentSong.album.imagen
+          }}
           isPlaying={isPlaying}
           onTogglePlay={() => setIsPlaying(!isPlaying)}
           onNext={handleNext}
@@ -231,13 +278,22 @@ const PlayList = () => {
         />
       )}
 
-      <MusicPlayer
-        song={currentSong}
-        isPlaying={isPlaying}
-        onTogglePlay={() => setIsPlaying(!isPlaying)}
-        onNext={handleNext}
-        onPrev={handlePrev}
-      />
+      {currentSong && (
+        <MusicPlayer
+          song={{
+            id: currentSong.id_cancion,
+            title: currentSong.titulo,
+            artist: currentSong.artista.nombre,
+            album: currentSong.album.titulo,
+            sound: currentSong.audio,
+            image: currentSong.album?.imagen || 'https://via.placeholder.com/150'
+          }}
+          isPlaying={isPlaying}
+          onTogglePlay={() => setIsPlaying(!isPlaying)}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+      )}
     </div>
   );
 };

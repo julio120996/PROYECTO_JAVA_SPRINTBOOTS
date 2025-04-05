@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
 /*SIRVE PARA EJECUTAR EL SERVICIO EN API REST EN EL FRONT END QUE TRABAJA CON REACT */
 /*PARA DAR PERMISO PARA TRABAJAR CON LOS METODOS*/
 @Configuration

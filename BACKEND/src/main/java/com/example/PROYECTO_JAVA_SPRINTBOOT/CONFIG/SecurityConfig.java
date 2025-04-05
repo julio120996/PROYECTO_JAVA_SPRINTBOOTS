@@ -9,7 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-/*PERMITE HABILITAR LAS RUTAS DE EJECUCION */
+        /* PERMITE HABILITAR LAS RUTAS DE EJECUCION */
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
@@ -25,14 +25,16 @@ public class SecurityConfig {
                                                                 "/usuario/actualizar-password",
                                                                 "/usuario/verificar",
                                                                 "/usuario/login",
-                                                                "/correo/enviar-codigo")
-                                                .permitAll()
-                                                .anyRequest().authenticated()) // Requiere autenticación para otras
-                                                                               // rutas
+                                                                "/correo/enviar-codigo",
+                                                                "/playlist/eliminar-cancion",
+                                                                "/playlist/**")
+                                                .permitAll() // Asegura que todas las rutas de playlist sean accesibles
+                                                             // sin autenticación
+                                                .anyRequest().authenticated() // Requiere autenticación para otras rutas
+                                )
                                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                                 .formLogin(form -> form.disable())
                                 .httpBasic(basic -> basic.disable());
-
                 return http.build();
         }
 

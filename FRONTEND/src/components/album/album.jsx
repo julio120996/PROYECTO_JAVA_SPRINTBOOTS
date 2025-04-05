@@ -1,8 +1,12 @@
 import { Add, Close, Favorite, MoreHoriz, Pause, PlayArrow } from "@mui/icons-material";
 import { Button, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAlbumDetalles } from "../../hooks/album/useAlbumDetalles";
+import { useAgregarCancionPlaylist } from "../../hooks/playlist/useAgregarCancionPlaylist";
+import { useCrearPlaylist } from "../../hooks/playlist/useCrearPlaylist";
+import { usePlaylist } from "../../hooks/playlist/usePlaylist";
+import { AuthContext } from "../../hooks/user/AuthContext";
 import MusicPlayer from "../MusicPlayer/MusicPlayer";
 import SongDetailView from "../SongDetails/SongDetailView";
 import "./album.css";
@@ -11,6 +15,7 @@ const AlbumPlaylist = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const albumId = searchParams.get("albumId");
+  const { usuario } = useContext(AuthContext);
 
   const {
     album: albumInfo,
@@ -31,7 +36,20 @@ const AlbumPlaylist = () => {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [processedSongs, setProcessedSongs] = useState([]);
-  const userPlaylists = ["Favoritos", "Workout", "Relax", "Fiesta"];
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+
+
+  // Hooks para playlists
+  const { playlists, listarPlaylists } = usePlaylist();
+  const { crearPlaylist, loading: creatingPlaylist } = useCrearPlaylist();
+  const { agregarCancionPlaylist } = useAgregarCancionPlaylist();
+
+
+
+
+
 
   useEffect(() => {
     if (albumId) {
@@ -43,11 +61,18 @@ const AlbumPlaylist = () => {
     if (songs.length > 0) {
       const withFixedDurations = songs.map(song => ({
         ...song,
-        duracion: song.duracion || Math.floor(Math.random() * (300 - 120 + 1) + 120)
+        duracion: song.duracion || Math.floor(Math.random() * (300 - 120 + 1) + 120),
+        id_cancion: song.id_cancion ?? song.id,  // Usa '??' en lugar de '||' para evitar sobrescribir valores falsy como 0
       }));
       setProcessedSongs(withFixedDurations);
     }
   }, [songs]);
+
+
+
+
+
+
 
   useEffect(() => {
     if (!audioRef.current) return;
@@ -84,15 +109,48 @@ const AlbumPlaylist = () => {
   const handleOpenPlaylistModal = (song) => {
     setSelectedSong(song);
     setOpenPlaylistModal(true);
+    if (usuario?.id_usuario) {
+      listarPlaylists(usuario.id_usuario);
+    }
   };
 
   const handleClosePlaylistModal = () => {
     setOpenPlaylistModal(false);
+    setShowCreateForm(false);
+    setNewPlaylistName("");
   };
 
-  const handleAddToPlaylist = (playlist) => {
-    console.log(`Añadiendo "${selectedSong.titulo}" a la playlist "${playlist}"`);
-    handleClosePlaylistModal();
+  // Modifica la función handleAddToPlaylist así:
+  const handleAddToPlaylist = async (id_playlist) => {
+    if (!selectedSong?.id_cancion || !usuario?.id_usuario) {
+      console.error("Falta información: canción o usuario no disponible");
+      return;
+    }
+
+    try {
+      const success = await agregarCancionPlaylist(id_playlist, selectedSong.id_cancion);
+
+      if (success) {
+        // Cierra el modal solo si fue exitoso
+        handleClosePlaylistModal();
+        // Opcional: mostrar notificación de éxito
+        console.log(`Canción agregada a playlist ${id_playlist}`);
+      } else {
+        console.error("Error al agregar canción a playlist");
+      }
+    } catch (error) {
+      console.error("Error al agregar canción:", error);
+    }
+  };
+
+  const handleCreatePlaylist = async () => {
+    if (!newPlaylistName.trim() || !usuario?.id_usuario) return;
+
+    const idPlaylist = await crearPlaylist(newPlaylistName, usuario.id_usuario);
+
+    if (idPlaylist) {
+      await handleAddToPlaylist(idPlaylist);
+    }
   };
 
   useEffect(() => {
@@ -253,6 +311,7 @@ const AlbumPlaylist = () => {
         ))}
       </div>
 
+      {/* Modal de Playlists */}
       <div className={`playlist-sidebar ${openPlaylistModal ? 'open' : ''}`}>
         <div className="playlist-sidebar-header">
           <IconButton className="close-button" onClick={handleClosePlaylistModal}>
@@ -273,25 +332,52 @@ const AlbumPlaylist = () => {
           )}
 
           <List className="playlist-list">
-            {userPlaylists.map((playlist, index) => (
-              <ListItem key={index} disablePadding>
-                <ListItemButton onClick={() => handleAddToPlaylist(playlist)}>
+            {playlists.map((playlist) => (
+              <ListItem key={playlist.id_playlist} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    console.log(`Agregando canción ${selectedSong?.id_cancion} a playlist ${playlist.id_playlist}`);
+                    handleAddToPlaylist(playlist.id_playlist);
+                  }}
+                >
                   <ListItemText
-                    primary={playlist}
-                    secondary={`${Math.floor(Math.random() * 50) + 1} canciones`}
+                    primary={playlist.nombre}
+
                   />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
 
-          <Button
-            fullWidth
-            className="create-playlist-button"
-            startIcon={<Add />}
-          >
-            Crear nueva playlist
-          </Button>
+          {showCreateForm ? (
+            <div className="create-playlist-form">
+              <input
+                type="text"
+                value={newPlaylistName}
+                onChange={(e) => setNewPlaylistName(e.target.value)}
+                placeholder="Nombre de la nueva playlist"
+                className="playlist-input"
+              />
+              <div className="form-actions">
+                <Button onClick={() => setShowCreateForm(false)}>Cancelar</Button>
+                <Button
+                  onClick={handleCreatePlaylist}
+                  disabled={!newPlaylistName.trim() || creatingPlaylist}
+                >
+                  {creatingPlaylist ? "Creando..." : "Crear"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              fullWidth
+              className="create-playlist-button"
+              startIcon={<Add />}
+              onClick={() => setShowCreateForm(true)}
+            >
+              Crear nueva playlist
+            </Button>
+          )}
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useApiBaseUrl } from "../urlAPI/useApiBaseUrl";
+import { useApiBaseUrl } from "../urlAPI/useApiBaseUrl.js";
 import { AuthContext } from "../user/AuthContext"; // Asegúrate de que la ruta es correcta
 
 export function useActualizarUsuario() {

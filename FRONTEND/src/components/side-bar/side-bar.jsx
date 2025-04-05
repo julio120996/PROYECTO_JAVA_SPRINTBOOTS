@@ -1,6 +1,10 @@
 import { Album, LogIn, Plus, Trash2, UserPlus, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useCrearPlaylist } from "../../hooks/playlist/useCrearPlaylist";
+import { useEliminarPlaylist } from "../../hooks/playlist/useEliminarPlaylist";
+import { usePlaylist } from "../../hooks/playlist/usePlaylist";
+import { AuthContext } from "../../hooks/user/AuthContext";
 import AlbumPlaylist from "../album/album";
 import PlayList from "../album/PlayList-App/PlayList-App";
 import Content from "../content/content";
@@ -10,12 +14,19 @@ const iconOptions = ["🎵", "🎸", "🎷", "🎻", "🎤", "🥁"];
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [albums, setAlbums] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newAlbumName, setNewAlbumName] = useState("");
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
   const [currentAlbumId, setCurrentAlbumId] = useState(null);
   const [showPlayList, setShowPlayList] = useState(false);
+
+  // Usar el contexto de autenticación
+  const { usuario } = useContext(AuthContext);
+  const isEnabled = !!usuario; // Convertir a booleano
+
+  // Hooks para manejar playlists
+  const { crearPlaylist } = useCrearPlaylist();
+  const { eliminarPlaylist } = useEliminarPlaylist();
+  const { playlists, listarPlaylists } = usePlaylist();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,37 +35,49 @@ const Sidebar = () => {
     const searchParams = new URLSearchParams(location.search);
     const albumId = searchParams.get("albumId");
     setCurrentAlbumId(albumId);
-
-    // Si la URL tiene "playList", mostrar PlayList
     setShowPlayList(searchParams.has("playList"));
   }, [location.search]);
 
   useEffect(() => {
-    const authState = localStorage.getItem("isAuthenticated") === "true";
-    setIsEnabled(authState);
-  }, []);
+    if (usuario?.id_usuario) {
+      listarPlaylists(usuario.id_usuario); // Pasar el ID de usuario al listar
+    }
+  }, [usuario?.id_usuario]); // Dependencia en el ID de usuario
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleModal = () => isEnabled && setIsModalOpen(!isModalOpen);
 
-  const handleAddAlbum = () => {
-    if (newAlbumName.trim() === "" || !isEnabled) return;
+  const handleAddPlaylist = async () => {
+    if (newPlaylistName.trim() === "" || !isEnabled) return;
 
-    const randomIcon = iconOptions[Math.floor(Math.random() * iconOptions.length)];
-    const newAlbum = { id: Date.now(), name: newAlbumName, icon: randomIcon };
+    if (!usuario?.id_usuario) {
+      console.error("ID de usuario no disponible");
+      return;
+    }
 
-    setAlbums([...albums, newAlbum]);
-    setNewAlbumName("");
-    setIsModalOpen(false);
+    const idPlaylist = await crearPlaylist(newPlaylistName, usuario.id_usuario);
+    
+    if (idPlaylist) {
+      setNewPlaylistName("");
+      setIsModalOpen(false);
+      listarPlaylists(usuario.id_usuario); // Actualizar la lista con el ID
+    }
   };
 
-  const handleDeleteAlbum = (id) => {
-    setAlbums(albums.filter((album) => album.id !== id));
+  const handleDeletePlaylist = async (id_playlist) => {
+    if (!usuario?.id_usuario) {
+      console.error("ID de usuario no disponible");
+      return;
+    }
+
+    const success = await eliminarPlaylist(id_playlist, usuario.id_usuario);
+    if (success) {
+      listarPlaylists(usuario.id_usuario); // Actualizar la lista con el ID
+    }
   };
 
-  const handleDoubleClick = (albumName) => {
-    // Cambia albumName por playlistName para ser consistente
-    navigate(`/home?playList=true&playlistName=${encodeURIComponent(albumName)}`);
+  const handleDoubleClick = (playlistId) => {
+    navigate(`/home?playList=true&playlistId=${playlistId}`);
     setShowPlayList(true);
   };
 
@@ -65,22 +88,31 @@ const Sidebar = () => {
         {isEnabled ? (
           <>
             <button className="add-button" onClick={toggleModal}>
-              <Plus size={28} /> Agregar Álbum
+              <Plus size={28} /> Crear Playlist
             </button>
             <nav>
-              {albums.map((album) => (
-                <div
-                  key={album.id}
-                  className="album"
-                  onDoubleClick={() => handleDoubleClick(album.name)}
-                >
-                  <span className="icon">{album.icon}</span>
-                  <span className="album-name">{album.name}</span>
-                  <button className="delete-button" onClick={() => handleDeleteAlbum(album.id)}>
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              ))}
+              {playlists.map((playlist) => {
+                const randomIcon = iconOptions[playlist.id_playlist % iconOptions.length];
+                return (
+                  <div
+                    key={playlist.id_playlist}
+                    className="album"
+                    onDoubleClick={() => handleDoubleClick(playlist.id_playlist, playlist.nombre)}
+                  >
+                    <span className="icon">{randomIcon}</span>
+                    <span className="album-name">{playlist.nombre}</span>
+                    <button 
+                      className="delete-button" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePlaylist(playlist.id_playlist);
+                      }}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                );
+              })}
             </nav>
           </>
         ) : (
@@ -118,15 +150,16 @@ const Sidebar = () => {
             <button className="close-button" onClick={toggleModal}>
               <X size={24} />
             </button>
-            <h3>Nuevo Álbum</h3>
+            <h3>Nueva Playlist</h3>
             <input
               type="text"
-              value={newAlbumName}
-              onChange={(e) => setNewAlbumName(e.target.value)}
-              placeholder="Escribe el nombre del álbum"
+              value={newPlaylistName}
+              onChange={(e) => setNewPlaylistName(e.target.value)}
+              placeholder="Escribe el nombre de la playlist"
+              onKeyPress={(e) => e.key === 'Enter' && handleAddPlaylist()}
             />
-            <button className="confirm-button" onClick={handleAddAlbum}>
-              Agregar
+            <button className="confirm-button" onClick={handleAddPlaylist}>
+              Crear
             </button>
           </div>
         </div>
