@@ -73,3 +73,5 @@ CREATE TABLE historial (
     FOREIGN KEY (id_cancion) REFERENCES canciones(id_cancion) ON DELETE CASCADE
 );
 
+
+
